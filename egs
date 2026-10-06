@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Informatyka – fiszki i testy</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#1d2433;--mu:#6b7488;--bd:#e1e5ef;--ac:#4f6df5;--acs:#e8ecff;--ok:#1f9d63;--oks:#e2f6ec;--er:#d6455d;--ers:#fde8ec}
+@media(prefers-color-scheme:dark){:root{--bg:#12151d;--card:#1b2030;--tx:#e8ebf4;--mu:#98a1b8;--bd:#2c3348;--acs:#26305a;--oks:#173a2b;--ers:#40202a}}
+body[data-u="u2"]{--ac:#14a37f;--acs:#dcf5ee}
+@media(prefers-color-scheme:dark){body[data-u="u2"]{--acs:#12372f}}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--tx);line-height:1.5}
+header{background:var(--card);border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:5}
+.bar{max-width:820px;margin:auto;padding:12px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.logo{font-weight:700;margin-right:auto;text-decoration:none;color:var(--tx)}
+.pill{padding:7px 14px;border-radius:99px;border:1px solid var(--bd);text-decoration:none;color:var(--tx);font-size:.92rem}
+.pill.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+main{max-width:820px;margin:auto;padding:20px 16px 60px}
+h1{font-size:1.6rem;margin:.2em 0}h2{font-size:1.2rem}
+.sub{color:var(--mu)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px;margin-top:20px}
+.pc{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:28px;text-align:center;text-decoration:none;color:var(--tx);transition:.15s}
+.pc:hover{transform:translateY(-3px);border-color:var(--ac)}
+.pc .em{font-size:2.4rem}
+.tabs{display:flex;gap:8px;margin:14px 0 18px}
+.tab{padding:9px 18px;border-radius:10px;text-decoration:none;color:var(--tx);background:var(--card);border:1px solid var(--bd)}
+.tab.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.btn{background:var(--ac);color:#fff;border:0;border-radius:10px;padding:10px 18px;font:inherit;cursor:pointer}
+.btn.g{background:var(--card);color:var(--tx);border:1px solid var(--bd)}
+.btn:disabled{opacity:.4;cursor:default}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:center;margin-top:16px}
+.fc{perspective:1000px;cursor:pointer;height:340px;margin-top:8px}
+.fi{position:relative;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.fc.f .fi{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:24px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;overflow:auto;box-shadow:0 6px 20px rgba(0,0,0,.05)}
+.face.b{transform:rotateY(180deg);border-color:var(--ac);align-items:flex-start;text-align:left}
+.face .tag{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ac);margin-bottom:10px}
+.face .q{font-size:1.5rem;font-weight:650}
+.face ul,.face ol{margin:.3em 0;padding-left:1.2em}
+.face table{border-collapse:collapse;margin:6px 0}.face td{padding:3px 12px 3px 0}
+code,.ex{font-family:ui-monospace,Consolas,monospace;background:var(--acs);padding:2px 8px;border-radius:6px}
+.hint{text-align:center;color:var(--mu);font-size:.85rem;margin-top:10px}
+.box{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:18px;margin-bottom:14px}
+.q-t{font-weight:600;margin-bottom:10px}
+.opt{display:block;padding:9px 12px;border:1px solid var(--bd);border-radius:10px;margin:6px 0;cursor:pointer}
+.opt:has(input:checked){background:var(--acs);border-color:var(--ac)}
+textarea,input[type=text]{font:inherit;color:var(--tx);background:var(--bg);border:1px solid var(--bd);border-radius:8px;padding:8px 10px}
+textarea{width:100%;min-height:70px}
+input[type=text]{width:130px;margin:0 4px}
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.mode{text-align:left;padding:14px}.mode b{display:block}.mode span{font-size:.85rem;opacity:.8}
+.score{font-size:2.2rem;font-weight:700;text-align:center}
+.wr{border-left:4px solid var(--er);background:var(--ers);padding:12px 14px;border-radius:8px;margin:10px 0}
+.wr small{display:block;color:var(--mu)}
+.good{color:var(--ok);font-weight:600}.bad{color:var(--er);font-weight:600}
+</style>
+</head>
+<body>
+<header><div class="bar" id="nav"></div></header>
+<main id="view"></main>
+<script>
+/* ======================= DANE ======================= */
+const FISZKI=[
+{t:"Czym jest system operacyjny?",b:"<b>System operacyjny</b> to podstawowe oprogramowanie zarządzające systemem komputerowym. Tworzy środowisko do uruchamiania programów i kontroli ich działania."},
+{t:"Warstwy systemu operacyjnego (od środka)",b:"<ol><li>komputer fizyczny</li><li>sterowniki</li><li>jądro systemu</li><li>powłoka systemu</li><li>programy użytkowe</li></ol>"},
+{t:"Zadania systemu operacyjnego",b:"<ul><li><b>Procesy</b> – synchronizacja zadań i czasu pracy procesora</li><li><b>Sprzęt</b> – sterowanie urządzeniami, komunikacja z innymi komputerami</li><li><b>Dane</b> – zapis i odczyt danych, informacje o danych</li><li><b>Pamięć</b> – kontrola i przydział pamięci, pamięć wirtualna</li><li><b>Bezpieczeństwo</b> – ochrona kont użytkowników, uprawnienia</li></ul>"},
+{t:"Popularne systemy operacyjne",b:"Windows, macOS, Linux, Android, iOS."},
+{t:"Oprogramowanie użytkowe",b:"Programy przeznaczone do wykonywania <b>konkretnych zadań</b> przez użytkownika. Korzystają z zasobów udostępnianych przez system operacyjny.<br><br><i>Przykłady:</i> przeglądarki, edytory tekstu, arkusze kalkulacyjne, programy graficzne, programy komunikacyjne."},
+{t:"Interfejs użytkownika",b:"Sposób komunikowania się użytkownika z komputerem."},
+{t:"GUI",b:"<b>Graficzny interfejs użytkownika</b> (Graphical User Interface)."},
+{t:"CLI",b:"<b>Tekstowy interfejs</b> (Command Line Interface), np. Wiersz poleceń."},
+{t:"Nośniki pamięci masowej",b:"Na nich zapisywane są dane. Należą do nich: dyski SSD, dyski HDD, pendrive, karty pamięci, zewnętrzne dyski USB."},
+{t:"Plik",b:"Uporządkowany zbiór danych zapisany na nośniku pamięci pod określoną nazwą."},
+{t:"Nazwa pliku",b:"<code>nazwa właściwa.rozszerzenie</code><br><br>np. <code>notatki.docx</code>"},
+{t:"Właściwości plików",b:"Nazwa, typ, rozmiar, data utworzenia, tylko do odczytu i inne."},
+{t:"Jednostki informacji",b:"<table><tr><td>bit (b)</td><td>0 lub 1</td></tr><tr><td>bajt (B)</td><td>8 bitów</td></tr><tr><td>kilobajt (KB)</td><td>1024 B</td></tr><tr><td>megabajt (MB)</td><td>1024 KB</td></tr><tr><td>gigabajt (GB)</td><td>1024 MB</td></tr><tr><td>terabajt (TB)</td><td>1024 GB</td></tr><tr><td>petabajt (PB)</td><td>1024 TB</td></tr></table>"},
+{t:"Folder (katalog)",b:"Miejsce przechowywania i organizacji plików oraz innych folderów."},
+{t:"Ścieżka dostępu",b:"Określa miejsce (lokalizację), w którym znajduje się plik lub folder."},
+{t:"Sieć komputerowa",b:"Zespół oddalonych od siebie komputerów i innych urządzeń (terminali, serwerowni) połączonych mediami transmisyjnymi tak, że mogą się komunikować i korzystać ze wspólnych zasobów."},
+{t:"PAN",b:"<b>Personal Area Network</b> – sieć osobista obejmująca niewielki obszar wokół jednej osoby."},
+{t:"LAN",b:"<b>Local Area Network</b> – sieć lokalna obejmująca niewielki obszar."},
+{t:"WLAN",b:"<b>Wireless Local Area Network</b> – bezprzewodowa sieć lokalna, wykorzystująca przede wszystkim Wi-Fi."},
+{t:"MAN",b:"<b>Metropolitan Area Network</b> – sieć obejmująca większy obszar, np. część miasta lub całe miasto."},
+{t:"WAN",b:"<b>Wide Area Network</b> – sieć rozległa obejmująca wiele miast, państw lub kontynentów."},
+{t:"Adres MAC a adres IP – po co one są?",b:"Każde urządzenie w sieci musi dać się zidentyfikować i odnaleźć podczas przesyłania danych.<ul><li><b>Adres fizyczny (MAC)</b> – związany z interfejsem sieciowym; przypomina <i>unikalny numer urządzenia</i></li><li><b>Adres logiczny (IP)</b> – identyfikuje urządzenie w sieci; przypomina <i>jego aktualną lokalizację</i></li></ul>"},
+{t:"Adres MAC",b:"Unikalny adres sprzętowy (fizyczny) przypisany do interfejsu sieciowego (karta Ethernet, karta Wi-Fi). Służy do identyfikacji urządzeń w sieciach lokalnych.<ul><li>Długość: <b>6 bajtów (48 bitów)</b></li><li>1 bajt = 2 cyfry szesnastkowe</li></ul>Przykład: <span class='ex'>00:1A:2B:3C:4D:5E</span>"},
+{t:"Adres IP",b:"Liczbowy identyfikator przypisany interfejsowi sieciowemu urządzenia (komputera, telefonu, drukarki). Pozwala je zidentyfikować w sieci (głównie w internecie) i przesyłać dane między sieciami.<ul><li>Budowa: <b>4 oktety (32 bity)</b></li></ul>Przykład: <span class='ex'>192.168.1.25</span>"}
+];
+const MC=[
+{q:"Jaka jest kolejność warstw systemu operacyjnego od środka?",o:["komputer fizyczny – sterowniki – jądro – powłoka – programy użytkowe","jądro – sterowniki – komputer fizyczny – powłoka – programy użytkowe","komputer fizyczny – jądro – sterowniki – programy użytkowe – powłoka","programy użytkowe – powłoka – jądro – sterowniki – komputer fizyczny"],a:0},
+{q:"Które z poniższych NIE jest zadaniem systemu operacyjnego?",o:["zarządzanie pamięcią","zarządzanie procesami","tworzenie arkuszy kalkulacyjnych","ochrona kont użytkowników"],a:2},
+{q:"Które z wymienionych NIE jest systemem operacyjnym?",o:["Linux","Android","iOS","Google Chrome"],a:3},
+{q:"CLI to:",o:["graficzny interfejs użytkownika","tekstowy interfejs, np. Wiersz poleceń","rodzaj sieci komputerowej","rodzaj pamięci masowej"],a:1},
+{q:"Które z poniższych jest nośnikiem pamięci masowej?",o:["Dysk SSD","Wiersz poleceń","Adres MAC","Przeglądarka"],a:0},
+{q:"Jak zbudowana jest nazwa pliku?",o:["rozszerzenie.nazwa właściwa","nazwa właściwa.rozszerzenie","nazwa właściwa/rozszerzenie","nazwa właściwa-rozmiar"],a:1},
+{q:"Ile bitów ma 1 bajt?",o:["4","8","16","1024"],a:1},
+{q:"Ile kilobajtów ma 1 megabajt?",o:["100","1000","1024","8"],a:2},
+{q:"Która sieć obejmuje część miasta lub całe miasto?",o:["PAN","LAN","MAN","WAN"],a:2},
+{q:"Która sieć obejmuje wiele miast, państw lub kontynentów?",o:["WAN","LAN","PAN","WLAN"],a:0},
+{q:"WLAN to:",o:["sieć osobista","bezprzewodowa sieć lokalna","sieć rozległa","sieć miejska"],a:1},
+{q:"Długość adresu MAC to:",o:["4 bajty (32 bity)","6 bajtów (48 bitów)","8 bajtów (64 bity)","2 bajty (16 bitów)"],a:1},
+{q:"Który zapis jest przykładem adresu MAC?",o:["192.168.1.25","00:1A:2B:3C:4D:5E","www.szkola.pl","C:\\Dokumenty\\plik.txt"],a:1},
+{q:"Który adres przypomina aktualną lokalizację urządzenia w sieci?",o:["adres MAC","adres IP","nazwa pliku","ścieżka dostępu"],a:1},
+{q:"Z ilu oktetów składa się adres IP (np. 192.168.1.25)?",o:["2","4","6","8"],a:1}
+];
+/* k = grupy słów kluczowych (wystarczy jedno z grupy), n = ile grup trzeba trafić */
+const OPEN=[
+{q:"Czym jest system operacyjny?",k:[["oprogramow"],["zarzadz"],["program","uruchom","srodowisk"]],n:2,m:"To podstawowe oprogramowanie zarządzające systemem komputerowym, tworzące środowisko do uruchamiania i kontroli działania programów."},
+{q:"Wymień zadania systemu operacyjnego.",k:[["proces"],["sprzet","urzadzen"],["dane","plik"],["pamiec"],["bezpiecz","uprawnien","konta","ochron"]],n:3,m:"Zarządzanie procesami, sprzętem, danymi, pamięcią oraz bezpieczeństwo i ochrona kont użytkowników (uprawnienia)."},
+{q:"Czym jest plik?",k:[["zbior","zestaw","dane"],["nosnik","pamiec","dysk"],["nazw"]],n:2,m:"To uporządkowany zbiór danych zapisany na nośniku pamięci pod określoną nazwą."},
+{q:"Czym jest folder (katalog)?",k:[["miejsce","przechow"],["plik"],["organiz","folder","katalog"]],n:2,m:"To miejsce przechowywania i organizacji plików oraz innych folderów."},
+{q:"Czym jest sieć komputerowa?",k:[["komputer","urzadzen"],["polaczon","medi","laczy"],["komunik","zasob","wspoln"]],n:2,m:"To zespół oddalonych komputerów i innych urządzeń połączonych mediami transmisyjnymi tak, że mogą się komunikować i korzystać ze wspólnych zasobów."},
+{q:"Czym różni się adres MAC od adresu IP?",k:[["fizyczn","sprzet","unikaln","kart","interfejs","numer"],["logiczn","lokaliz","w sieci","zmien","identyfik"]],n:2,m:"MAC to unikalny adres fizyczny interfejsu sieciowego (jak numer urządzenia), a IP to adres logiczny identyfikujący urządzenie w sieci (jak jego aktualna lokalizacja)."}
+];
+/* a = lista dozwolonych odpowiedzi dla każdej luki */
+const FILL=[
+{q:"System operacyjny to podstawowe ___ zarządzające systemem komputerowym.",a:[["oprogramowanie"]]},
+{q:"Warstwy: komputer fizyczny – sterowniki – ___ systemu – powłoka systemu – programy użytkowe.",a:[["jądro","jadro"]]},
+{q:"GUI to ___ interfejs użytkownika.",a:[["graficzny"]]},
+{q:"1 bajt to ___ bitów.",a:[["8","osiem"]]},
+{q:"1 MB to ___ KB.",a:[["1024"]]},
+{q:"Nazwa pliku ma postać: nazwa właściwa.___",a:[["rozszerzenie"]]},
+{q:"Sieć ___ obejmuje niewielki obszar wokół jednej osoby (PAN).",a:[["osobista"]]},
+{q:"___ to bezprzewodowa sieć lokalna wykorzystująca przede wszystkim Wi-Fi.",a:[["wlan"]]},
+{q:"Adres MAC ma ___ bajtów, czyli ___ bitów.",a:[["6","sześć","szesc"],["48"]]},
+{q:"Adres IP składa się z ___ oktetów, czyli ___ bitów.",a:[["4","cztery"],["32"]]},
+{q:"Adres ___ przypomina unikalny numer urządzenia, a adres ___ – jego aktualną lokalizację w sieci.",a:[["mac"],["ip"]]}
+];
+
+/* ======================= NARZĘDZIA ======================= */
+const $=s=>document.querySelector(s);
+const norm=s=>(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/ł/g,"l").trim().replace(/\s+/g," ");
+const esc=s=>(s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const NAMES={u1:"Użytkownik 1",u2:"Użytkownik 2"};
+const EMO={u1:"🧑‍💻",u2:"👩‍💻"};
+/* osobny stan dla każdego profilu */
+const S={u1:{order:FISZKI.map((_,i)=>i),i:0,flip:false,test:null},u2:{order:FISZKI.map((_,i)=>i),i:0,flip:false,test:null}};
+const load=u=>{try{return JSON.parse(localStorage.getItem("info_result_"+u))}catch(e){return null}};
+const save=(u,r)=>{try{localStorage.setItem("info_result_"+u,JSON.stringify(r))}catch(e){}};
+
+/* ======================= ROUTING ======================= */
+function route(){
+  const [u,tab]=location.hash.slice(1).split("/");
+  document.body.dataset.u=NAMES[u]?u:"";
+  $("#nav").innerHTML=`<a class="logo" href="#">💾 Informatyka</a>`+
+    Object.keys(NAMES).map(k=>`<a class="pill ${k===u?"on":""}" href="#${k}/fiszki">${EMO[k]} ${NAMES[k]}</a>`).join("");
+  if(!NAMES[u]) return home();
+  profile(u,tab==="test"?"test":"fiszki");
+}
+function home(){
+  $("#view").innerHTML=`<h1>Kartkówka z informatyki</h1><p class="sub">Wybierz swój profil. Każdy profil ma własne fiszki i testy – dwie osoby mogą uczyć się jednocześnie i sobie nie przeszkadzają.</p>
+  <div class="grid">${Object.keys(NAMES).map(k=>`<a class="pc" href="#${k}/fiszki"><div class="em">${EMO[k]}</div><h2>${NAMES[k]}</h2><span class="sub">Fiszki i testy</span></a>`).join("")}</div>`;
+}
+function profile(u,tab){
+  $("#view").innerHTML=`<h1>${EMO[u]} ${NAMES[u]}</h1>
+  <div class="tabs"><a class="tab ${tab==="fiszki"?"on":""}" href="#${u}/fiszki">Fiszki</a><a class="tab ${tab==="test"?"on":""}" href="#${u}/test">Testy</a></div><div id="pane"></div>`;
+  tab==="fiszki"?cards(u):testMenu(u);
+}
+
+/* ======================= FISZKI ======================= */
+function cards(u){
+  const s=S[u],f=FISZKI[s.order[s.i]];
+  $("#pane").innerHTML=`<div class="sub" style="text-align:center">Fiszka ${s.i+1} / ${FISZKI.length}</div>
+  <div class="fc ${s.flip?"f":""}" id="fc"><div class="fi">
+    <div class="face"><div class="tag">Pytanie</div><div class="q">${f.t}</div></div>
+    <div class="face b"><div class="tag">Odpowiedź</div><div>${f.b}</div></div></div></div>
+  <div class="hint">Kliknij fiszkę, aby ją odwrócić</div>
+  <div class="row"><button class="btn g" id="pv" ${s.i===0?"disabled":""}>← Poprzednia</button>
+  <button class="btn" id="nx" ${s.i===FISZKI.length-1?"disabled":""}>Następna →</button></div>
+  <div class="row"><button class="btn g" id="sh">🔀 Pomieszaj</button><button class="btn g" id="rs">↺ Od początku</button></div>`;
+  $("#fc").onclick=()=>{s.flip=!s.flip;$("#fc").classList.toggle("f")};
+  const go=d=>{s.flip=false;s.i+=d;cards(u)};
+  $("#pv").onclick=()=>go(-1);$("#nx").onclick=()=>go(1);
+  $("#sh").onclick=()=>{s.order=shuffle(s.order);s.i=0;s.flip=false;cards(u)};
+  $("#rs").onclick=()=>{s.order=FISZKI.map((_,i)=>i);s.i=0;s.flip=false;cards(u)};
+}
+
+/* ======================= TESTY ======================= */
+function testMenu(u){
+  const r=load(u);
+  $("#pane").innerHTML=`<h2>Wybierz rodzaj testu</h2><div class="modes">
+  <button class="btn g mode" data-m="mc"><b>Test ABCD</b><span>Wybierz jedną poprawną odpowiedź</span></button>
+  <button class="btn g mode" data-m="open"><b>Pełne zdania</b><span>Odpowiadaj własnymi słowami</span></button>
+  <button class="btn g mode" data-m="fill"><b>Uzupełnianie luk</b><span>Wpisz brakujące słowa</span></button>
+  <button class="btn mode" data-m="mix"><b>Wszystko razem</b><span>Mieszanka wszystkich typów</span></button></div>
+  <div id="last"></div>`;
+  document.querySelectorAll(".mode").forEach(b=>b.onclick=()=>startTest(u,b.dataset.m));
+  if(r) $("#last").innerHTML="<h2>Ostatni wynik</h2>"+resultHTML(r);
+}
+const MODE={mc:"Test ABCD",open:"Pełne zdania",fill:"Uzupełnianie luk",mix:"Wszystko razem"};
+function startTest(u,m){
+  let q=[];
+  const pick=(arr,n,t)=>shuffle(arr).slice(0,n).map(x=>({...x,t}));
+  if(m==="mc")q=pick(MC,15,"mc").map(x=>{const c=x.o[x.a],o=shuffle(x.o);return{...x,o,a:o.indexOf(c)}});
+  if(m==="open")q=pick(OPEN,6,"open");
+  if(m==="fill")q=pick(FILL,11,"fill");
+  if(m==="mix")q=[...pick(MC,7,"mc").map(x=>{const c=x.o[x.a],o=shuffle(x.o);return{...x,o,a:o.indexOf(c)}}),...pick(OPEN,3,"open"),...pick(FILL,5,"fill")];
+  S[u].test={m,q};
+  const html=q.map((x,i)=>{
+    let body="";
+    if(x.t==="mc")body=x.o.map((o,j)=>`<label class="opt"><input type="radio" name="q${i}" value="${j}"> <b>${"ABCD"[j]}.</b> ${esc(o)}</label>`).join("");
+    if(x.t==="open")body=`<textarea id="q${i}" placeholder="Odpowiedz pełnym zdaniem…"></textarea>`;
+    if(x.t==="fill"){let n=0;body=`<div>${esc(x.q).replace(/___/g,()=>`<input type="text" data-q="${i}" data-b="${n++}" autocomplete="off">`)}</div>`}
+    return `<div class="box"><div class="q-t">${i+1}. ${x.t==="fill"?"Uzupełnij luki:":esc(x.q)}</div>${body}</div>`;
+  }).join("");
+  $("#pane").innerHTML=`<h2>${MODE[m]}</h2>${html}<div class="row"><button class="btn" id="ck">Sprawdź</button><button class="btn g" id="bk">Wróć</button></div>`;
+  $("#ck").onclick=()=>finish(u);$("#bk").onclick=()=>testMenu(u);
+  window.scrollTo(0,0);
+}
+function finish(u){
+  const {m,q}=S[u].test;let score=0;const wrong=[];
+  q.forEach((x,i)=>{
+    let ok=false,given="",correct="";
+    if(x.t==="mc"){
+      const c=document.querySelector(`input[name=q${i}]:checked`);
+      given=c?`${"ABCD"[c.value]}. ${x.o[c.value]}`:"(brak odpowiedzi)";
+      correct=`${"ABCD"[x.a]}. ${x.o[x.a]}`;ok=c&&+c.value===x.a;
+    }
+    if(x.t==="open"){
+      const v=norm($("#q"+i).value);given=$("#q"+i).value.trim()||"(brak odpowiedzi)";correct=x.m;
+      ok=x.k.filter(g=>g.some(w=>v.includes(w))).length>=x.n;
+    }
+    if(x.t==="fill"){
+      const ins=[...document.querySelectorAll(`input[data-q="${i}"]`)];
+      given=ins.map(e=>e.value.trim()||"…").join(" | ");
+      correct=x.a.map(a=>a[0]).join(" | ");
+      ok=ins.every((e,j)=>x.a[j].map(norm).includes(norm(e.value)));
+    }
+    if(ok)score++;else wrong.push({q:x.t==="fill"?x.q:x.q,given,correct});
+  });
+  const r={m:MODE[m],score,total:q.length,wrong,date:new Date().toLocaleString("pl-PL")};
+  save(u,r);
+  $("#pane").innerHTML=`<h2>${r.m}</h2>`+resultHTML(r)+`<div class="row"><button class="btn" id="again">Spróbuj ponownie</button><button class="btn g" id="bk">Wróć do menu</button></div>`;
+  $("#again").onclick=()=>startTest(u,m);$("#bk").onclick=()=>testMenu(u);
+  window.scrollTo(0,0);
+}
+function resultHTML(r){
+  const p=Math.round(r.score/r.total*100);
+  return `<div class="box"><div class="score ${p>=50?"good":"bad"}">${r.score} / ${r.total} (${p}%)</div><div class="sub" style="text-align:center">${r.m} · ${r.date}</div></div>`+
+  (r.wrong.length?`<h2>Błędne odpowiedzi (${r.wrong.length})</h2>`+r.wrong.map(w=>`<div class="wr"><b>${esc(w.q)}</b><small>Twoja odpowiedź: <span class="bad">${esc(w.given)}</span></small><small>Poprawnie: <span class="good">${esc(w.correct)}</span></small></div>`).join(""):`<p class="good" style="text-align:center">Brak błędów – świetnie! 🎉</p>`);
+}
+window.addEventListener("hashchange",route);route();
+</script>
+</body>
+</html>
